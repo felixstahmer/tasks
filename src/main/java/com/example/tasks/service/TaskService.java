@@ -1,6 +1,7 @@
 package com.example.tasks.service;
 
 import com.example.tasks.model.Task;
+import com.example.tasks.model.TaskStatus;
 import com.example.tasks.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,10 @@ public class TaskService {
     }
 
     public Task updateTask(Long id, Task task){
-        if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found with ID: " + id + ". Cannot perform update.");
+        Task taskToUpdate = taskRepository.findById(id).orElseThrow();
+
+        if(taskToUpdate.getStatus() == TaskStatus.DONE && (task.getStatus() == TaskStatus.OPEN || task.getStatus() == TaskStatus.IN_PROGRESS)){
+            throw new RuntimeException("Cannot revert back from status DONE.");
         }
 
         return taskRepository.save(task);
