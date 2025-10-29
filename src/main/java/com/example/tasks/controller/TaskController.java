@@ -2,6 +2,7 @@ package com.example.tasks.controller;
 
 import com.example.tasks.model.Task;
 import com.example.tasks.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class TaskController {
     public void deleteTaskById(@PathVariable long id) { taskService.deleteTask(id); }
 
     @PostMapping("/tasks")
-    public Task createTask(@RequestBody Task task) { return taskService.createTask(task); }
+    public Task createTask(@Valid @RequestBody Task task) { return taskService.createTask(task); }
 
     @PutMapping("/tasks/{id}")
-    public Task updateTask(@PathVariable long id, @RequestBody Task task) { return taskService.updateTask(id, task); }
+    public Task updateTask(@PathVariable long id, @Valid @RequestBody Task task) { return taskService.updateTask(id, task); }
 }

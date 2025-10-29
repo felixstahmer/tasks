@@ -1,5 +1,6 @@
 package com.example.tasks.model;
 
+import com.example.tasks.validation.IsWeekday;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,8 @@ public class Task {
 
     private String title;
     private String description;
+
+    @IsWeekday
     private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
@@ -20,7 +23,6 @@ public class Task {
 
     public Task() {
     }
-
     public Task(String title, String description, LocalDateTime dueDate, TaskStatus status) {
         this.title = title;
         this.description = description;
