@@ -1,5 +1,7 @@
 package com.example.tasks.service;
 
+import com.example.tasks.exception.InvalidInputException;
+import com.example.tasks.exception.ResourceNotFoundException;
 import com.example.tasks.model.Task;
 import com.example.tasks.model.TaskStatus;
 import com.example.tasks.repository.TaskRepository;
@@ -20,7 +22,9 @@ public class TaskService {
     }
 
     public Task findById(Long id){
-        return taskRepository.findById(id).orElseThrow();
+        return taskRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 
     public Task createTask(Task task){
@@ -28,10 +32,12 @@ public class TaskService {
     }
 
     public Task updateTask(Long id, Task task){
-        Task taskToUpdate = taskRepository.findById(id).orElseThrow();
+        Task taskToUpdate = taskRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task to update not found"));
 
         if(taskToUpdate.getStatus() == TaskStatus.DONE && (task.getStatus() == TaskStatus.OPEN || task.getStatus() == TaskStatus.IN_PROGRESS)){
-            throw new RuntimeException("Cannot revert back from status DONE.");
+            throw new InvalidInputException("Cannot revert back from status DONE.");
         }
 
         return taskRepository.save(task);
@@ -39,7 +45,7 @@ public class TaskService {
 
     public void deleteTask(Long id){
         if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found with ID: " + id + ". Cannot perform delete.");
+            throw new ResourceNotFoundException("Task not found with ID: " + id + ". Cannot perform delete.");
         }
 
         taskRepository.deleteById(id);
